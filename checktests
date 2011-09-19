@@ -1,0 +1,86 @@
+#!/bin/sh
+CFLAGS='-Wno-unused -include /usr/include/stdio.h -include /usr/include/sys/wait.h -U__APPLE_CC__ -D__APPLE_CC__=5627 -IBlocksRuntime'
+LIB=libBlocksRuntime.a
+TESTDIR=testbin
+rm -rf $TESTDIR
+mkdir $TESTDIR
+if ! clang --version; then
+  echo clang not installed
+  exit 1
+fi
+if clang++ --version > /dev/null 2>&1; then
+  dopp=1
+else
+  echo clang++ not installed -- skipping C++ tests
+fi
+for test in BlocksRuntime/tests/*.[cC]; do
+  skip=
+  extra=
+  stub=
+  println=
+  xfail=
+  pmsg='should PASS'
+  fmsg='should FAIL'
+  case $test in
+    */rdar6405500.c | \
+    */rdar6414583.c | \
+    */objectRRGC.c | \
+    */dispatch_async.c) skip=1;;
+    */macro.c) stub='void foo(); int main(){foo(); printf("success");}'; println=1;;
+    */cast.c | \
+    */voidarg.c) println=1;;
+    */varargs-bad-assign.c | \
+    */rettypepromotion.c | \
+    */shorthandexpression.c | \
+    */k-and-r.c | \
+    */sizeof.c | \
+    */orbars.c | \
+    */constassign.c) xfail=1;;
+  esac
+  ext=.c
+  cpp=
+  CC=clang
+  case $test in
+    *.C) cpp=1; CC=clang++; ext=.C;;
+    *.cpp) cpp=1; CC=clang++; ext=.cpp;;
+    *.cp) cpp=1; CC=clang++; ext=.cp;;
+    *.c++) cpp=1; CC=clang++; ext=.c++;;
+  esac
+  if [ -z "$skip" -a -n "$cpp" -a -z "$dopp" ]; then
+    echo "skipping $test (clang++ not installed)"
+  else
+    if [ -n "$skip" ]; then
+      echo skipping $test
+    else
+      if [ -n "$xfail" ]; then
+        echo "--- $(basename $test) ($fmsg) ---"
+      else
+        echo "--- $(basename $test) ($pmsg) ---"
+      fi
+      if [ -n "$stub" ]; then
+        $CC -c $CFLAGS $extra -o $TESTDIR/$(basename $test $ext).o -fblocks $test && \
+        echo "$stub" | $CC $CFLAGS $extra -o $TESTDIR/$(basename $test $ext) -fblocks \
+          $TESTDIR/$(basename $test $ext).o $LIB -x c - && \
+        $TESTDIR/$(basename $test $ext)
+      else
+        $CC -c $CFLAGS $extra -o $TESTDIR/$(basename $test $ext).o -fblocks $test && \
+        $CC -o $TESTDIR/$(basename $test $ext) -fblocks $TESTDIR/$(basename $test $ext).o $LIB && \
+        $TESTDIR/$(basename $test $ext)
+      fi
+      result=$?
+      if [ -n "$println" ]; then
+        echo ''
+      fi
+      if [ $result = 0 -a -n "$xfail" ]; then
+        echo ''
+        echo "*** ^FAILURE: expect FAIL test PASSED! ***"
+        echo ''
+      fi
+      if [ $result != 0 -a -z "$xfail" ]; then
+        echo ''
+        echo "*** ^FAILURE: expect PASS test FAILED! ***"
+        echo ''
+      fi
+    fi
+  fi
+done

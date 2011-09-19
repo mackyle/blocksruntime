@@ -1,0 +1,13 @@
+#!/bin/sh
+set -v
+: ${CC:=gcc}
+: ${AR:=ar}
+: ${RANLIB:=ranlib}
+: ${CFLAGS:=-O2}
+LIB=libBlocksRuntime.a
+SRC=BlocksRuntime
+if test -f $LIB; then rm $LIB; fi
+$CC -c $CFLAGS -o $SRC/data.o $SRC/data.c \
+&& $CC -c $CFLAGS -o $SRC/runtime.o -I . $SRC/runtime.c \
+&& $AR cr $LIB $SRC/data.o $SRC/runtime.o \
+&& $RANLIB $LIB

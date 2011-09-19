@@ -1,0 +1,23 @@
+#ifndef _CONFIG_H_
+#define _CONFIG_H_
+
+#ifdef __APPLE__
+
+#define HAVE_AVAILABILITY_MACROS_H 1
+#define HAVE_TARGET_CONDITIONALS_H 1
+#define HAVE_OSATOMIC_COMPARE_AND_SWAP_INT 1
+#define HAVE_OSATOMIC_COMPARE_AND_SWAP_LONG 1
+#define HAVE_LIBKERN_OSATOMIC_H
+
+#else /* !__APPLE__ */
+
+#ifdef __GNUC__
+
+#define HAVE_SYNC_BOOL_COMPARE_AND_SWAP_INT 1
+#define HAVE_SYNC_BOOL_COMPARE_AND_SWAP_LONG 1
+
+#endif /* __GNUC__ */
+
+#endif /* !__APPLE__ */
+
+#endif /* _CONFIG_H_ */

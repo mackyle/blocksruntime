@@ -1,0 +1,4 @@
+*.o
+/libBlocksRuntime.a
+/testbin
+/sample
