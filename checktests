@@ -13,6 +13,7 @@ if clang++ --version > /dev/null 2>&1; then
 else
   echo clang++ not installed -- skipping C++ tests
 fi
+testsfailed=
 for test in BlocksRuntime/tests/*.[cC]; do
   skip=
   extra=
@@ -75,12 +76,24 @@ for test in BlocksRuntime/tests/*.[cC]; do
         echo ''
         echo "*** ^FAILURE: expect FAIL test PASSED! ***"
         echo ''
+        testsfailed=1
       fi
       if [ $result != 0 -a -z "$xfail" ]; then
         echo ''
         echo "*** ^FAILURE: expect PASS test FAILED! ***"
         echo ''
+        testsfailed=1
       fi
     fi
   fi
 done
+if [ -n "$testsfailed" ]; then
+  echo ''
+  echo "***"
+  echo "*** WARNING: Some failures occurred, look for '*** ^FAILURE:' lines above"
+  echo "***"
+  echo ''
+  exit 1
+fi
+echo "*** All tests passed ***"
+exit 0
