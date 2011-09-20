@@ -1,5 +1,5 @@
 #!/bin/sh
-CFLAGS='-Wno-unused -include /usr/include/stdio.h -include /usr/include/sys/wait.h -U__APPLE_CC__ -D__APPLE_CC__=5627 -IBlocksRuntime'
+CFLAGS='-Wno-unused -include /usr/include/stdio.h -include /usr/include/sys/wait.h -IBlocksRuntime'
 LIB=libBlocksRuntime.a
 TESTDIR=testbin
 rm -rf $TESTDIR
@@ -74,13 +74,17 @@ for test in BlocksRuntime/tests/*.[cC]; do
       fi
       if [ $result = 0 -a -n "$xfail" ]; then
         echo ''
+        echo "***"
         echo "*** ^FAILURE: expect FAIL test PASSED! ***"
+        echo "***"
         echo ''
         testsfailed=1
       fi
       if [ $result != 0 -a -z "$xfail" ]; then
         echo ''
+        echo "***"
         echo "*** ^FAILURE: expect PASS test FAILED! ***"
+        echo "***"
         echo ''
         testsfailed=1
       fi
