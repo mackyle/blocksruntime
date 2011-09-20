@@ -1,5 +1,5 @@
 #!/bin/sh
-CFLAGS='-Wno-unused -include /usr/include/stdio.h -include /usr/include/sys/wait.h -IBlocksRuntime'
+CFLAGS='-Wno-unused -include /usr/include/stdio.h -include /usr/include/sys/wait.h -U__APPLE_CC__ -D__APPLE_CC__=5627 -IBlocksRuntime'
 LIB=libBlocksRuntime.a
 TESTDIR=testbin
 rm -rf $TESTDIR
