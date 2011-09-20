@@ -15,6 +15,7 @@
     #container {
       margin: 0 auto;
       max-width: 90ex;
+      position: relative;
     }
     h1 { font-size: 3.8em; color: black; margin-bottom: 0.1em; }
     h1 .small { font-size: 0.4em; }
@@ -32,6 +33,28 @@
     p.left { text-align: left; }
     .bigger {font-size: 112%; }
     li { margin-top: 0.5em; }
+    #TOC span {
+      display: inline-block;
+      margin-left: 8px
+    }
+    .sidebar {
+      display: float;
+      position: absolute;
+      left: -35ex;
+      text-align: right;
+      width: 30ex;
+      font-size: 75%;
+      margin: 0;
+      padding: 2px;
+    }
+    .sidebar a:visited, .sidebar a:link {
+      color: inherit;
+      text-decoration: none;
+      border-bottom: thin dotted gray;
+    }
+    .sidebar a:active {
+      color: red;
+    }
     .footer { text-align:center; padding-top:2em; font-style: italic; }
   </style>
 </head>
@@ -55,6 +78,18 @@
   The libBlocksRuntime.a library from compiler-rt.
 </div>
 
+<span id="TOC" class="sidebar">
+<b>Table of Contents</b><br /><span>
+<a href="#"            >Overview</a><br />
+<a href="#why"         >Why?</a><br />
+<a href="#license"     >License</a><br />
+<a href="#install"     >Install</a><br />
+<a href="#download"    >Download</a><br />
+<a href="#needs"       >Do I Need This?</a><br />
+<a href="#blocksdox"   >Blocks Language Extension</a><br />
+<a href="#github"      >GitHub</a><br />
+</span></span>
+
 <p>A clone of the compiler-rt library (<a href="http://compiler-rt.llvm.org/">http://compiler-rt.llvm.org/</a>) but only the BlocksRuntime library portion.  (Actually the compiler-rt master subversion source repository at http://llvm.org/svn/llvm-project/compiler-rt has an automatic git mirror at http://llvm.org/git/compiler-rt.git the refs/heads/master of which is cloned into refs/heads/compiler-rt of this repository.)
 
 </p><p>
@@ -67,7 +102,7 @@ Any system which has a version of the clang compiler (either pre-installed or in
 
 Your system may already come with the BlocksRuntime library pre-installed or installed as part of the clang package.  And furthermore, it may not require linking with any special library to use it either.  See the <a href="#needs">Do I Need This?</a> section for a way to check.
 
-<h2>Why?</h2>
+<h2 id="why">Why?</h2>
 <p>You want to use the <a href="#blocksdox">Blocks language extension</a>, but when you attempt to build a test program with something like:
 <pre>clang -o sample -fblocks sample.c</pre>
 you get a linker error something about an undefined <tt>__NSConcreteGlobalBlock</tt> symbol so you try:
@@ -78,16 +113,16 @@ This repository can help you build the <tt>libBlocksRuntime.a</tt> library very 
 
 <p>See the <a href="https://github.com/mackyle/blocksruntime/blob/master/README.txt">README.txt</a> file for further information.</p>
 
-<h2>License</h2>
+<h2 id="license">License</h2>
 <p>Dual licensed under both <a href="http://www.opensource.org/licenses/UoI-NCSA.php">the University of Illinois "BSD-Like" license</a>
 and <a href="http://www.opensource.org/licenses/mit-license.php">the MIT license</a>.
 
 See <a href="http://compiler-rt.llvm.org/">here</a>, <a href="http://llvm.org/docs/DeveloperPolicy.html#license">here</a> and the <a href="https://github.com/mackyle/blocksruntime/blob/master/BlocksRuntime/LICENSE.TXT">LICENSE.TXT</a> file for further information.</p>
 
-<h2>Install</h2>
+<h2 id="install">Install</h2>
 <p>See the <a href="https://github.com/mackyle/blocksruntime/blob/master/README.txt">README.txt</a> file for further information.</p>
 
-<h2>Download</h2>
+<h2 id="download">Download</h2>
 <p>
   You can download this project in either
   <a href="http://github.com/mackyle/blocksruntime/zipball/master">zip</a> or
@@ -177,7 +212,7 @@ int main()
 </pre>
 In the above sample code, both <tt>block</tt> and <tt>block2</tt> are block variables.  And while <tt>i</tt> is an integer variable, the optional <tt>__block</tt> storage class language extension modifies <tt>i</tt>'s behavior when it's accessed from within a block (which doesn't happen in this sample code and so it's not necessary, but is included anyway to verify that the compiler accepts <tt>__block</tt>).
 
-<h2>GitHub</h2>
+<h2 id="github">GitHub</h2>
 <p class="left">
   Visit the GitHub project page (source code etc.) at <a href="http://github.com/mackyle/blocksruntime">http://github.com/mackyle/blocksruntime</a>.
 </p>
