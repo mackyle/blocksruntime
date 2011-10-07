@@ -49,10 +49,10 @@ cmake are needed (but ar and ranlib will be used but they can also be changed
 with the AR and RANLIB environment variables similarly to the way the compiler
 can be changed).
 
-IMPORTANT Mac OS X Note:  If you are building this library on Mac OS X (presumably
-to use with a clang built with MacPorts or otherwise obtained), you probably want
-a fat library with multiple architectures in it.  You can do that with the CFLAGS
-variable like so:
+IMPORTANT Mac OS X Note:  If you are building this library on Mac OS X
+(presumably to use with a clang built with MacPorts or otherwise obtained), you
+probably want a fat library with multiple architectures in it.  You can do that
+with the CFLAGS variable like so:
 
   CFLAGS='-O2 -arch x86_64 -arch ppc64 -arch i386 -arch ppc' ./buildlib
 
