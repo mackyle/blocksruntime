@@ -16,6 +16,7 @@ fi
 testsfailed=
 for test in BlocksRuntime/tests/*.[cC]; do
   skip=
+  skipdoze=
   extra=
   stub=
   println=
@@ -27,6 +28,7 @@ for test in BlocksRuntime/tests/*.[cC]; do
     */rdar6414583.c | \
     */objectRRGC.c | \
     */dispatch_async.c) skip=1;;
+    */fail.c) skipdoze=1;;
     */macro.c) stub='void foo(); int main(){foo(); printf("success");}'; println=1;;
     */cast.c | \
     */voidarg.c) println=1;;
@@ -47,6 +49,9 @@ for test in BlocksRuntime/tests/*.[cC]; do
     *.cp) cpp=1; CC=clang++; ext=.cp;;
     *.c++) cpp=1; CC=clang++; ext=.c++;;
   esac
+  if [ -n "$COMSPEC" -a -n "$skipdoze" ]; then
+    skip=1
+  fi
   if [ -z "$skip" -a -n "$cpp" -a -z "$dopp" ]; then
     echo "skipping $test (clang++ not installed)"
   else
