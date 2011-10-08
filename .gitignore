@@ -1,4 +1,5 @@
 *.o
+*.dSYM
 /libBlocksRuntime.a
 /testbin
 /sample

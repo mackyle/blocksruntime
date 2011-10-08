@@ -5,7 +5,7 @@
 
    The above line should result in:
 
-     Hello world
+     Hello world 2
 
    If you have everything correctly installed.
 */
@@ -15,12 +15,15 @@
 
 int main()
 {
-  __block int i = 0;
+  __block int i;
+  i = 0;
   void (^block)() = ^{
-    printf("Hello world\n");
+    printf("Hello world %d\n", i);
   };
+  ++i;
   void (^block2)() = Block_copy(block);
+  ++i;
   block2();
   Block_release(block2);
-  return i;
+  return 0;
 }
