@@ -119,7 +119,7 @@ just do this:
 
   clang -o sample -fblocks sample.c -lBlocksRuntime && ./sample
 
-If the above line outputs "Hello world" then your Blocks runtime support is
+If the above line outputs "Hello world 2" then your Blocks runtime support is
 correctly installed and fully usable.  Have fun!
 
 Note that it's possible to use the Blocks runtime without installing it into
