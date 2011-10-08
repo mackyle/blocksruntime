@@ -26,7 +26,7 @@
     a { color: black; }
     .description { font-size: 1.2em; margin-bottom: 2em; margin-top: 2em; font-style: italic; }
     .download { float: right; }
-    pre, tt { font-family: Menlo, Monaco, Consolas, Courier, "Courier New", monospace; }
+    pre, tt { font-family: Menlo, Monaco, Consolas, Courier, "Courier New", monospace; font-size: 95%;}
     pre { padding: 0.5em 1ex; border: thin dotted silver; }
     hr { border: 0; width: 80%; border-bottom: thin solid silver; }
     p { text-align: justify; }
@@ -94,11 +94,11 @@
 
 </p><p>
 
-In addition to the clone of the BlocksRuntime library sources, a config.h file and a few convenient shell scripts have been added in order to build, test and install the Block.h header and libBlocksRuntime.a library without needing cmake or make.
+In addition to the clone of the BlocksRuntime library sources, a config.h file, testprefix.h file, a sample.c file and a few convenient shell scripts have been added in order to build, test and install the Block.h header and libBlocksRuntime.a library without needing cmake or make.
 
 </p><p>
 
-Any system which has a version of the clang compiler (either pre-installed or installable via any mechanism) with support for the -fblocks option should be supported.</p>  In particular, the FreeBSD, Linux and MacPorts versions of clang are known to work.
+Any system which has a version of the clang compiler (either pre-installed or installable via any mechanism) with support for the -fblocks option should be supported.</p>  In particular, the FreeBSD, Linux, MacPorts and mingw versions of clang are known to work with the blocks runtime.
 
 Your system may already come with the BlocksRuntime library pre-installed or installed as part of the clang package.  And furthermore, it may not require linking with any special library to use it either.  See the <a href="#needs">Do I Need This?</a> section for a way to check.
 
@@ -133,7 +133,7 @@ See <a href="http://compiler-rt.llvm.org/">here</a>, <a href="http://llvm.org/do
   <pre>$ git clone git://github.com/mackyle/blocksruntime</pre>
 </p>
 <p>This project also has <a href="http://repo.or.cz/w/blocksruntime.git">a mirror on repo.or.cz</a> which has
-<a href="http://repo.or.cz/git-browser/by-commit.html?r=blocksruntime.git">a much better graphic log browser for the project.
+<a href="http://repo.or.cz/git-browser/by-commit.html?r=blocksruntime.git">a much better graphic log browser for the project</a>.
 </p>
 
 <h2 id="needs">Do I Need This?</h2>
@@ -193,7 +193,7 @@ Here's the <a href="https://github.com/mackyle/blocksruntime/blob/master/sample.
 
    The above line should result in:
 
-     Hello world
+     Hello world 2
 
    If you have everything correctly installed.
 */
@@ -203,14 +203,17 @@ Here's the <a href="https://github.com/mackyle/blocksruntime/blob/master/sample.
 
 int main()
 {
-  __block int i = 0;
+  __block int i;
+  i = 0;
   void (^block)() = ^{
-    printf("Hello world\n");
+    printf("Hello world %d\n", i);
   };
+  ++i;
   void (^block2)() = Block_copy(block);
+  ++i;
   block2();
   Block_release(block2);
-  return i;
+  return 0;
 }
 </pre>
 In the above sample code, both <tt>block</tt> and <tt>block2</tt> are block variables.  And while <tt>i</tt> is an integer variable, the optional <tt>__block</tt> storage class language extension modifies <tt>i</tt>'s behavior when it's accessed from within a block (which doesn't happen in this sample code and so it's not necessary, but is included anyway to verify that the compiler accepts <tt>__block</tt>).
