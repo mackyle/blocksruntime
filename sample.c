@@ -10,6 +10,10 @@
    If you have everything correctly installed.
 */
 
+#ifndef __BLOCKS__
+#error must be compiled with -fblocks option enabled
+#endif
+
 #include <stdio.h>
 #include <Block.h>
 
