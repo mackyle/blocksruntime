@@ -198,6 +198,10 @@ Here's the <a href="https://github.com/mackyle/blocksruntime/blob/master/sample.
    If you have everything correctly installed.
 */
 
+#ifndef __BLOCKS__
+#error must be compiled with -fblocks option enabled
+#endif
+
 #include &lt;stdio.h>
 #include &lt;Block.h>
 
