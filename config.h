@@ -13,8 +13,21 @@
 
 #ifdef __GNUC__
 
+#if !defined(__WIN32__) && !defined(_WIN32)
+
+#if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 1) /* GCC >= 4.1 */
+
+/* runtime.c ignores these if __WIN32__ or _WIN32 is defined */
 #define HAVE_SYNC_BOOL_COMPARE_AND_SWAP_INT 1
 #define HAVE_SYNC_BOOL_COMPARE_AND_SWAP_LONG 1
+
+#else /* GCC earlier than version 4.1 */
+
+#error GCC version 4.1 (or compatible) or later is required on non-apple, non-w32 targets
+
+#endif /* GCC earlier than version 4.1 */
+
+#endif /* !defined(__WIN32__) && !defined(_WIN32) */
 
 #endif /* __GNUC__ */
 
