@@ -114,7 +114,7 @@ Sample Code
 -----------
 After you have installed the Blocks runtime header and library, you can check
 to make sure everything's working by building the sample.c file.  The
-instructiions are at the top of the file (use head sample.c to see them) or
+instructions are at the top of the file (use head sample.c to see them) or
 just do this:
 
   clang -o sample -fblocks sample.c -lBlocksRuntime && ./sample
