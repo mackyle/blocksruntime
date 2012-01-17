@@ -78,7 +78,7 @@ run.  Yes, this is a real failure.  No it's not a bug in the Blocks runtime
 library, it's actually a bug in clang.  You may want to examine the
 copy-block-literal-rdar6439600.c source file to make sure you fully grok the
 failure so you can avoid getting burned by it in your code.  There may be a fix
-in the clang project by now (but as of the clang 2.9 release it still seems to
+in the clang project by now (but as of the clang 3.0 release it still seems to
 fail), however it may be a while until it rolls downhill to your clang package.
 
 Note that if you have an earlier version of clang (anything before version 2.8
