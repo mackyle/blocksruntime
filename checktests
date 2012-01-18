@@ -1,7 +1,8 @@
 #!/bin/sh
 : ${CC:=clang}
 : ${CXX:=$CC}
-CFLAGS='-Wno-unused -include testprefix.h -IBlocksRuntime'
+: ${CFLAGS:=}
+CPPFLAGS='-Wno-unused -include testprefix.h -IBlocksRuntime'
 CCFLAGS='-std=c99'
 LIB=libBlocksRuntime.a
 TESTDIR=testbin
@@ -60,7 +61,7 @@ for test in BlocksRuntime/tests/*.[cC]; do
   ext=.c
   cpp=
   USECC="$CC"
-  USEFLAGS="$CCFLAGS $CFLAGS"
+  USEFLAGS="$CCFLAGS $CPPFLAGS"
   USELIB="$LIB"
   case $test in
     *.C)   cpp=1; ext=.C;;
@@ -70,7 +71,7 @@ for test in BlocksRuntime/tests/*.[cC]; do
   esac
   if [ -n "$cpp" ]; then
     USECC="$CXX"
-    USEFLAGS="$CFLAGS"
+    USEFLAGS="$CPPFLAGS"
     USELIB="$LIB -lstdc++"
   fi
   if [ -n "$COMSPEC" -a -n "$skipdoze" ]; then
@@ -88,13 +89,13 @@ for test in BlocksRuntime/tests/*.[cC]; do
         echo "--- $(basename $test) ($pmsg) ---"
       fi
       if [ -n "$stub" ]; then
-        "$USECC" -c $USEFLAGS $extra -o $TESTDIR/$(basename $test $ext).o -fblocks $test && \
-        echo "$stub" | "$USECC" $USEFLAGS $extra -o $TESTDIR/$(basename $test $ext) -fblocks \
+        "$USECC" -c $CFLAGS $USEFLAGS $extra -o $TESTDIR/$(basename $test $ext).o -fblocks $test && \
+        echo "$stub" | "$USECC" $CFLAGS $USEFLAGS $extra -o $TESTDIR/$(basename $test $ext) -fblocks \
           $TESTDIR/$(basename $test $ext).o $USELIB -x c - && \
         $TESTDIR/$(basename $test $ext)
       else
-        "$USECC" -c $USEFLAGS $extra -o $TESTDIR/$(basename $test $ext).o -fblocks $test && \
-        "$USECC" -o $TESTDIR/$(basename $test $ext) -fblocks $TESTDIR/$(basename $test $ext).o $USELIB && \
+        "$USECC" -c $CFLAGS $USEFLAGS $extra -o $TESTDIR/$(basename $test $ext).o -fblocks $test && \
+        "$USECC" $CFLAGS -o $TESTDIR/$(basename $test $ext) -fblocks $TESTDIR/$(basename $test $ext).o $USELIB && \
         $TESTDIR/$(basename $test $ext)
       fi
       result=$?
