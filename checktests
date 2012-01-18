@@ -1,18 +1,31 @@
 #!/bin/sh
+: ${CC:=clang}
+: ${CXX:=$CC}
 CFLAGS='-Wno-unused -include testprefix.h -IBlocksRuntime'
+CCFLAGS='-std=c99'
 LIB=libBlocksRuntime.a
 TESTDIR=testbin
 rm -rf $TESTDIR
 mkdir $TESTDIR
-if ! clang --version; then
-  echo clang not installed
+if ! "$CC" --version >/dev/null 2>&1; then
+  echo "$CC" not installed
   exit 1
-fi
-if clang++ --version > /dev/null 2>&1; then
-  dopp=1
 else
-  echo clang++ not installed -- skipping C++ tests
+  if ("$CC" -fblocks -c -o /dev/null -x c - < /dev/null 2>&1 || echo '-fblocks') 2>&1 | grep -q -- -fblocks; then
+    echo "$CC" does not support the -fblocks option
+    exit 1
+  fi
 fi
+if "$CXX" --version >/dev/null 2>&1; then
+  dopp=1
+  if ("$CXX" -fblocks -c -o /dev/null -x c - < /dev/null 2>&1 || echo '-fblocks') | grep -q -- -fblocks; then
+    echo "$CXX" does not support the -fblocks option
+    exit 1
+  fi
+else
+  echo "$CXX" not installed -- skipping C++ tests
+fi
+failcount=0
 testsfailed=
 for test in BlocksRuntime/tests/*.[cC]; do
   skip=
@@ -42,18 +55,25 @@ for test in BlocksRuntime/tests/*.[cC]; do
   esac
   ext=.c
   cpp=
-  CC=clang
+  USECC="$CC"
+  USEFLAGS="$CCFLAGS $CFLAGS"
+  USELIB="$LIB"
   case $test in
-    *.C) cpp=1; CC=clang++; ext=.C;;
-    *.cpp) cpp=1; CC=clang++; ext=.cpp;;
-    *.cp) cpp=1; CC=clang++; ext=.cp;;
-    *.c++) cpp=1; CC=clang++; ext=.c++;;
+    *.C)   cpp=1; ext=.C;;
+    *.cpp) cpp=1; ext=.cpp;;
+    *.cp)  cpp=1; ext=.cp;;
+    *.c++) cpp=1; ext=.c++;;
   esac
+  if [ -n "$cpp" ]; then
+    USECC="$CXX"
+    USEFLAGS="$CFLAGS"
+    USELIB="$LIB -lstdc++"
+  fi
   if [ -n "$COMSPEC" -a -n "$skipdoze" ]; then
     skip=1
   fi
   if [ -z "$skip" -a -n "$cpp" -a -z "$dopp" ]; then
-    echo "skipping $test (clang++ not installed)"
+    echo "skipping $test ("$CXX" not installed)"
   else
     if [ -n "$skip" ]; then
       echo skipping $test
@@ -64,13 +84,13 @@ for test in BlocksRuntime/tests/*.[cC]; do
         echo "--- $(basename $test) ($pmsg) ---"
       fi
       if [ -n "$stub" ]; then
-        $CC -c $CFLAGS $extra -o $TESTDIR/$(basename $test $ext).o -fblocks $test && \
-        echo "$stub" | $CC $CFLAGS $extra -o $TESTDIR/$(basename $test $ext) -fblocks \
-          $TESTDIR/$(basename $test $ext).o $LIB -x c - && \
+        "$USECC" -c $USEFLAGS $extra -o $TESTDIR/$(basename $test $ext).o -fblocks $test && \
+        echo "$stub" | "$USECC" $USEFLAGS $extra -o $TESTDIR/$(basename $test $ext) -fblocks \
+          $TESTDIR/$(basename $test $ext).o $USELIB -x c - && \
         $TESTDIR/$(basename $test $ext)
       else
-        $CC -c $CFLAGS $extra -o $TESTDIR/$(basename $test $ext).o -fblocks $test && \
-        $CC -o $TESTDIR/$(basename $test $ext) -fblocks $TESTDIR/$(basename $test $ext).o $LIB && \
+        "$USECC" -c $USEFLAGS $extra -o $TESTDIR/$(basename $test $ext).o -fblocks $test && \
+        "$USECC" -o $TESTDIR/$(basename $test $ext) -fblocks $TESTDIR/$(basename $test $ext).o $USELIB && \
         $TESTDIR/$(basename $test $ext)
       fi
       result=$?
@@ -79,28 +99,36 @@ for test in BlocksRuntime/tests/*.[cC]; do
       fi
       if [ $result = 0 -a -n "$xfail" ]; then
         echo ''
-        echo "***"
+        echo "*"
+        echo "**"
         echo "*** ^FAILURE: expect FAIL test PASSED! ***"
-        echo "***"
+        echo "**"
+        echo "*"
         echo ''
         testsfailed=1
+	failcount=$(($failcount + 1))
       fi
       if [ $result != 0 -a -z "$xfail" ]; then
         echo ''
-        echo "***"
+        echo "*"
+        echo "**"
         echo "*** ^FAILURE: expect PASS test FAILED! ***"
-        echo "***"
+        echo "**"
+        echo "*"
         echo ''
         testsfailed=1
+	failcount=$(($failcount + 1))
       fi
     fi
   fi
 done
 if [ -n "$testsfailed" ]; then
   echo ''
-  echo "***"
-  echo "*** WARNING: Some failures occurred, look for '*** ^FAILURE:' lines above"
-  echo "***"
+  echo "*"
+  echo "**"
+  echo "*** WARNING: Some failures($failcount) occurred, look for '*** ^FAILURE:' lines above"
+  echo "**"
+  echo "*"
   echo ''
   exit 1
 fi
