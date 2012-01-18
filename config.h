@@ -9,6 +9,19 @@
 #define HAVE_OSATOMIC_COMPARE_AND_SWAP_LONG 1
 #define HAVE_LIBKERN_OSATOMIC_H
 
+/* Be sneaky and turn OSAtomicCompareAndSwapInt into OSAtomicCompareAndSwap32
+ * and OSAtomicCompareAndSwapLong into either OSAtomicCompareAndSwap32
+ * or OSAtomicCompareAndSwap64 (depending on __LP64__) so that the library
+ * is Tiger compatible!
+ */
+#include <libkern/OSAtomic.h>
+#define OSAtomicCompareAndSwapInt OSAtomicCompareAndSwap32
+#ifdef __LP64__
+#define OSAtomicCompareAndSwapLong OSAtomicCompareAndSwap64
+#else
+#define OSAtomicCompareAndSwapLong OSAtomicCompareAndSwap32
+#endif
+
 #else /* !__APPLE__ */
 
 #ifdef __GNUC__
