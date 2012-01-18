@@ -25,6 +25,10 @@ if "$CXX" --version >/dev/null 2>&1; then
 else
   echo "$CXX" not installed -- skipping C++ tests
 fi
+if [ ! -r "$LIB" ]; then
+  echo "No $LIB file found, try running $(dirname "$0")/buildlib first"
+  exit 1
+fi
 failcount=0
 testsfailed=
 for test in BlocksRuntime/tests/*.[cC]; do
