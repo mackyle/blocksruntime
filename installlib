@@ -3,6 +3,7 @@
 : ${prefix:=/usr/local}
 : ${includedir:=$prefix/include}
 : ${libdir:=$prefix/lib}
+: ${DESTROOT:=}
 
 HEADER=BlocksRuntime/Block.h
 LIB=libBlocksRuntime.a
@@ -35,6 +36,9 @@ if [ "$#" != 0 ]; then
   exit 1
 fi
 
+if [ -n "$DESTROOT" ]; then
+echo "Destination Root(\$DESTROOT):    $DESTROOT (default is \"\")"
+fi
 echo "Install Prefix(\$prefix):        $prefix (default is /usr/local)"
 echo "Include Directory(\$includedir): $includedir (default is \$prefix/include)"
 echo "Library Directory(\$libdir):     $libdir (default is \$prefix/lib)"
@@ -46,6 +50,6 @@ if [ -z "$dryrun" -a "$myid" != 0 ]; then
   echo "(Or try using the --dry-run option)"
   exit 1
 fi
-docmd "install -d $includedir $libdir"
-docmd "install -m 644 $HEADER $includedir/"
-docmd "install -m 644 $LIB $libdir/"
+docmd "install -d "$DESTROOT"$includedir "$DESTROOT"$libdir"
+docmd "install -m 644 $HEADER "$DESTROOT"$includedir/"
+docmd "install -m 644 $LIB "$DESTROOT"$libdir/"
