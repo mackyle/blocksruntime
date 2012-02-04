@@ -45,7 +45,7 @@ echo "Library Directory(\$libdir):     $libdir (default is \$prefix/lib)"
 echo "(use prefix=prefixdir $0 [or similar] to change)"
 echo ''
 
-if [ -z "$dryrun" -a "$myid" != 0 ]; then
+if [ -z "$DESTROOT" -a -z "$dryrun" -a "$myid" != 0 ]; then
   echo "Must be root to install, use sudo $0"
   echo "(Or try using the --dry-run option)"
   exit 1
