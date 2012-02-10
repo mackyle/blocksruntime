@@ -23,7 +23,7 @@ if [ ! -r $HEADER ]; then
   exit 1
 fi
 if [ ! -r $LIB ]; then
-  echo "Cannot find $LIB, did you run buildlib?"
+  echo "Cannot find $LIB, did you run buildlib or buildlib-osx?"
   exit 1
 fi
 dryrun=
