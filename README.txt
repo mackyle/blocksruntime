@@ -56,6 +56,12 @@ with the CFLAGS variable like so:
 
   CFLAGS='-O2 -arch x86_64 -arch ppc64 -arch i386 -arch ppc' ./buildlib
 
+The buildlib-osx script will attempt to make an intelligent guess about
+building an OS X library and then run buildlib.  If you're using Mac OS X you
+can do this to build a FAT OS X library:
+
+  ./buildlib-osx
+
 -------
 Testing
 -------
@@ -98,7 +104,7 @@ works (./checktests) then it can be installed with:
 The default installation prefix is /usr/local, but can be changed to /myprefix
 like so:
 
-  sudo sh -c 'prefix=/myprefix ./installlib'
+  sudo env prefix=/myprefix ./installlib'
 
 The include file (Block.h) is installed into $prefix/include and the library
 (libBlocksRuntime.a) into $prefix/lib by default.  (Those can also be changed
@@ -108,6 +114,9 @@ changed.)
 If you want to see what will be installed without actually installing use:
 
   ./installlib --dry-run
+
+Note that DESTDIR is supported by the installlib script if that's needed.
+Just set DESTDIR before running installlib the same way prefix can be set.
 
 -----------
 Sample Code

@@ -3,7 +3,7 @@
 : ${prefix:=/usr/local}
 : ${includedir:=$prefix/include}
 : ${libdir:=$prefix/lib}
-: ${DESTROOT:=}
+: ${DESTDIR:=}
 
 HEADER=BlocksRuntime/Block.h
 LIB=libBlocksRuntime.a
@@ -36,8 +36,8 @@ if [ "$#" != 0 ]; then
   exit 1
 fi
 
-if [ -n "$DESTROOT" ]; then
-echo "Destination Root(\$DESTROOT):    $DESTROOT (default is \"\")"
+if [ -n "$DESTDIR" ]; then
+echo "Destination Root(\$DESTDIR):     $DESTDIR (default is \"\")"
 fi
 echo "Install Prefix(\$prefix):        $prefix (default is /usr/local)"
 echo "Include Directory(\$includedir): $includedir (default is \$prefix/include)"
@@ -45,11 +45,11 @@ echo "Library Directory(\$libdir):     $libdir (default is \$prefix/lib)"
 echo "(use prefix=prefixdir $0 [or similar] to change)"
 echo ''
 
-if [ -z "$DESTROOT" -a -z "$dryrun" -a "$myid" != 0 ]; then
+if [ -z "$DESTDIR" -a -z "$dryrun" -a "$myid" != 0 ]; then
   echo "Must be root to install, use sudo $0"
   echo "(Or try using the --dry-run option)"
   exit 1
 fi
-docmd "install -d "$DESTROOT"$includedir "$DESTROOT"$libdir"
-docmd "install -m 644 $HEADER "$DESTROOT"$includedir/"
-docmd "install -m 644 $LIB "$DESTROOT"$libdir/"
+docmd "install -d "$DESTDIR"$includedir "$DESTDIR"$libdir"
+docmd "install -m 644 $HEADER "$DESTDIR"$includedir/"
+docmd "install -m 644 $LIB "$DESTDIR"$libdir/"
