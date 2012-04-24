@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-  <meta charset='utf-8'>
+  <meta charset='utf-8' />
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
   <title>mackyle/blocksruntime @ GitHub</title>
 
@@ -66,9 +67,9 @@
 
 <div class="download">
   <a href="http://github.com/mackyle/blocksruntime/zipball/master">
-    <img border="0" width="90" src="http://github.com/images/modules/download/zip.png"></a>
+    <img border="0" width="90" src="http://github.com/images/modules/download/zip.png" /></a>
   <a href="http://github.com/mackyle/blocksruntime/tarball/master">
-    <img border="0" width="90" src="http://github.com/images/modules/download/tar.png"></a>
+    <img border="0" width="90" src="http://github.com/images/modules/download/tar.png" /></a>
 </div>
 
 <h1><a href="http://github.com/mackyle/blocksruntime">blocksruntime</a>
@@ -110,6 +111,7 @@ you get a linker error something about an undefined <tt>__NSConcreteGlobalBlock<
 but then you get a linker error about <tt>ld: library not found for -lBlocksRuntime</tt> instead.
 
 This repository can help you build the <tt>libBlocksRuntime.a</tt> library very easily so that you can successfully use the <a href="#blocksdox">Blocks language extension</a> supported by the <tt>-fblocks</tt> option of <a href="http://clang.llvm.org/">the clang compiler</a>.
+</p>
 
 <p>See the <a href="https://github.com/mackyle/blocksruntime/blob/master/README.txt">README.txt</a> file for further information.</p>
 
@@ -143,41 +145,42 @@ See <a href="http://compiler-rt.llvm.org/">here</a>, <a href="http://llvm.org/do
 <li>Do you have the clang compiler?  Try this:
 <pre>clang --version</pre>
 If it says something like <tt>clang: command not found</tt> then you do not have the clang
-compiler so you have no need for this library.
+compiler so you have no need for this library.</li>
 
 <li>Does your version of clang support <tt>-fblocks</tt>?  Try this:
 <pre>echo "void (^b)(void) = ^{};" |
 clang -c -o /dev/null -fblocks -x c -</pre>
 If you get any kind of error output then your version of clang does not support the <tt>-fblocks</tt>
-option so you have no need for this library.
+option so you have no need for this library.</li>
 
 <li>Does your clang installation already include built-in libBlocksRuntime.a support?  Try this:
 <pre>echo "int main(){return ^{return 42;}();}" |
 clang -o /dev/null -fblocks -x c -</pre>
 If you do <em>NOT</em> get any kind of error output then your installation of clang already includes the
-Blocks runtime support and you have no need for this library.
+Blocks runtime support and you have no need for this library.</li>
 
 <li>Does your clang installation already include a separate BlocksRuntime library?  Try this:
 <pre>echo "int main(){return ^{return 42;}();}" |
 clang -o /dev/null -fblocks -x c - -lBlocksRuntime</pre>
 If you do <em>NOT</em> get any kind of error output then your installation of clang already provides the
 Blocks runtime support via the <tt>-lBlocksRuntime</tt> library option and you have no need for
-this library (which provides the same thing).
+this library (which provides the same thing).</li>
 
 <li>If you got to this step then yes, you do need this library if you want to use the Blocks support
-available with your installation of the clang compiler.
+available with your installation of the clang compiler.</li>
 
 </ol>
+</p>
 
 <h2 id="blocksdox">Blocks Language Extension</h2>
 
 Various Blocks language extension documentation can be found at:
 
 <ul>
-<li><a href="http://clang.llvm.org/docs/LanguageExtensions.html#blocks">http://clang.llvm.org/docs/LanguageExtensions.html#blocks</a>
-<li><a href="http://clang.llvm.org/docs/BlockLanguageSpec.txt">http://clang.llvm.org/docs/BlockLanguageSpec.txt</a>
-<li><a href="http://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/Blocks">http://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/Blocks</a>
-<li><a href="http://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/Blocks/Blocks.pdf">http://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/Blocks/Blocks.pdf</a>
+<li><a href="http://clang.llvm.org/docs/LanguageExtensions.html#blocks">http://clang.llvm.org/docs/LanguageExtensions.html#blocks</a></li>
+<li><a href="http://clang.llvm.org/docs/BlockLanguageSpec.txt">http://clang.llvm.org/docs/BlockLanguageSpec.txt</a></li>
+<li><a href="http://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/Blocks">http://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/Blocks</a></li>
+<li><a href="http://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/Blocks/Blocks.pdf">http://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/Blocks/Blocks.pdf</a></li>
 </ul>
 
 Basically the Blocks language extension adds <a href="http://en.wikipedia.org/wiki/Closure_%28computer_science%29">closure</a> support
@@ -189,7 +192,7 @@ Here's the <a href="https://github.com/mackyle/blocksruntime/blob/master/sample.
 /*
    Test your installation by running:
 
-     clang -o sample -fblocks sample.c -lBlocksRuntime && ./sample
+     clang -o sample -fblocks sample.c -lBlocksRuntime &amp;&amp; ./sample
 
    The above line should result in:
 
