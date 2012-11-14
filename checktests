@@ -2,8 +2,8 @@
 : ${CC:=clang}
 : ${CXX:=$CC}
 : ${CFLAGS:=}
-CPPFLAGS='-Wno-unused -include testprefix.h -IBlocksRuntime'
-CCFLAGS='-std=c99'
+CPPFLAGS='-O -Wno-unused -include testprefix.h -IBlocksRuntime'
+CCFLAGS='-std=c99 -Wimplicit-function-declaration'
 LIB=libBlocksRuntime.a
 TESTDIR=testbin
 rm -rf $TESTDIR
