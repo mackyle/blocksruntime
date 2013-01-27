@@ -159,6 +159,6 @@ Documentation
 You can find information on the Blocks language extension at these URLs
 
   http://clang.llvm.org/docs/LanguageExtensions.html#blocks
-  http://clang.llvm.org/docs/BlockLanguageSpec.txt
+  http://clang.llvm.org/docs/BlockLanguageSpec.html
   http://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/Blocks
   http://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/Blocks/Blocks.pdf
