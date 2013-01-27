@@ -104,7 +104,7 @@ works (./checktests) then it can be installed with:
 The default installation prefix is /usr/local, but can be changed to /myprefix
 like so:
 
-  sudo env prefix=/myprefix ./installlib'
+  sudo env prefix=/myprefix ./installlib
 
 The include file (Block.h) is installed into $prefix/include and the library
 (libBlocksRuntime.a) into $prefix/lib by default.  (Those can also be changed
