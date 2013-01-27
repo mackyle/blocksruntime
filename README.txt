@@ -22,6 +22,9 @@ subdirectory) along with tests (in the BlocksRuntime/tests subdirectory) and
 the original CREDITS.TXT, LICENSE.TXT and README.txt from the top-level
 compiler-rt project (which have been placed in the BlocksRuntime subdirectory).
 
+This runtime can also be used with the gcc-apple-4.2 compiler built using the
+MacPorts.org apple-gcc42 package on Mac OS X.
+
 -------
 License
 -------
@@ -50,9 +53,9 @@ with the AR and RANLIB environment variables similarly to the way the compiler
 can be changed).
 
 IMPORTANT Mac OS X Note:  If you are building this library on Mac OS X
-(presumably to use with a clang built with MacPorts or otherwise obtained), you
-probably want a fat library with multiple architectures in it.  You can do that
-with the CFLAGS variable like so:
+(presumably to use with a clang or gcc-apple-4.2 built with MacPorts or
+otherwise obtained), you probably want a fat library with multiple architectures
+in it.  You can do that with the CFLAGS variable like so:
 
   CFLAGS='-O2 -arch x86_64 -arch ppc64 -arch i386 -arch ppc' ./buildlib
 
@@ -78,6 +81,13 @@ installing the Blocks runtime in the first place?)  Run the tests like so:
 
   ./checktests
 
+By default checktests expects the clang compiler to be available in the PATH
+and named clang.  If you are using gcc-apple-4.2 or your clang is named
+something different (such as clang-mp-2.9 or clang-mp-3.0) run the tests
+like this instead (replacing clang-mp-3.0 with your compiler's name):
+
+  CC=clang-mp-3.0 ./checktests
+
 Problems are indicated with a line that starts "*** ^FAILURE:".  You will
 probably see one of these when the copy-block-literal-rdar6439600.c test is
 run.  Yes, this is a real failure.  No it's not a bug in the Blocks runtime
@@ -86,6 +96,11 @@ copy-block-literal-rdar6439600.c source file to make sure you fully grok the
 failure so you can avoid getting burned by it in your code.  There may be a fix
 in the clang project by now (but as of the clang 3.0 release it still seems to
 fail), however it may be a while until it rolls downhill to your clang package.
+
+If you are using CC=gcc-apple-4.2, you will probably get two additional
+failures in the cast.c and josh.C tests.  These extra failures are not failures
+in the blocks runtime itself, just gcc not accepting some source files that
+clang accepts.  You can still use the libBlocksRuntime.a library just fine.
 
 Note that if you have an earlier version of clang (anything before version 2.8
 see clang -v) then clang++ (C++ support) is either incomplete or missing and
@@ -124,7 +139,7 @@ Sample Code
 After you have installed the Blocks runtime header and library, you can check
 to make sure everything's working by building the sample.c file.  The
 instructions are at the top of the file (use head sample.c to see them) or
-just do this:
+just do this (replace clang with the name of the compiler you're using):
 
   clang -o sample -fblocks sample.c -lBlocksRuntime && ./sample
 
