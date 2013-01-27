@@ -4,7 +4,7 @@
   <meta charset='utf-8' />
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-  <title>mackyle/blocksruntime @ GitHub</title>
+  <title>mackyle/blocksruntime</title>
 
   <style type="text/css">
     body {
@@ -17,6 +17,14 @@
       margin: 0 auto;
       max-width: 90ex;
       position: relative;
+    }
+    @media screen {
+      .last { margin-bottom: -1em; }
+      .aftermargin {
+        position: absolute;
+        height: 100%;
+        width: 1px;
+      }
     }
     h1 { font-size: 3.8em; color: black; margin-bottom: 0.1em; }
     h1 .small { font-size: 0.4em; }
@@ -33,20 +41,29 @@
     p { text-align: justify; }
     p.left { text-align: left; }
     .bigger {font-size: 112%; }
+    .smaller {font-size: 89%; }
     li { margin-top: 0.5em; }
     #TOC span {
       display: inline-block;
       margin-left: 8px
     }
-    .sidebar {
-      display: float;
+    .sidebar-fixed {
+      display: none;
       position: absolute;
-      left: -35ex;
+      left: -40ex;
       text-align: right;
-      width: 30ex;
       font-size: 75%;
       margin: 0;
-      padding: 2px;
+    }
+    @media screen {
+      .sidebar-fixed { display: block; }
+    }
+    .sidebar {
+      display: block;
+      position: fixed;
+      padding: 3px;
+      width: 36ex;
+      border-right: thin dotted silver;
     }
     .sidebar a:visited, .sidebar a:link {
       color: inherit;
@@ -61,25 +78,23 @@
 </head>
 
 <body>
-  <a href="http://github.com/mackyle/blocksruntime"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
 
 <div id="container">
 
 <div class="download">
-  <a href="http://github.com/mackyle/blocksruntime/zipball/master">
-    <img border="0" width="90" src="http://github.com/images/modules/download/zip.png" /></a>
-  <a href="http://github.com/mackyle/blocksruntime/tarball/master">
-    <img border="0" width="90" src="http://github.com/images/modules/download/tar.png" /></a>
+  <a href="https://github.com/mackyle/blocksruntime/archive/master.tar.gz">
+    <img border="0" src="data:image/gif;base64,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" /></a>
+  <a href="https://github.com/mackyle/blocksruntime/archive/master.zip">
+    <img border="0" src="data:image/gif;base64,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" /></a>
 </div>
 
-<h1><a href="http://github.com/mackyle/blocksruntime">blocksruntime</a>
-  <!--<span class="small">by <a href="http://github.com/mackyle">mackyle</a></span>--></h1>
+<h1><a href="https://github.com/mackyle/blocksruntime">blocksruntime</a></h1>
 
 <div class="description">
   The libBlocksRuntime.a library from compiler-rt.
 </div>
 
-<span id="TOC" class="sidebar">
+<span class="sidebar-fixed"><span id="TOC" class="sidebar">
 <b>Table of Contents</b><br /><span>
 <a href="#"            >Overview</a><br />
 <a href="#why"         >Why?</a><br />
@@ -88,8 +103,9 @@
 <a href="#download"    >Download</a><br />
 <a href="#needs"       >Do I Need This?</a><br />
 <a href="#blocksdox"   >Blocks Language Extension</a><br />
-<a href="#github"      >GitHub</a><br />
-</span></span>
+<a href="#seealso"     >See Also</a><br />
+<a href="#gitrepo"     >Git Repository Browser</a><br />
+</span></span></span>
 
 <p>A clone of the compiler-rt library (<a href="http://compiler-rt.llvm.org/">http://compiler-rt.llvm.org/</a>) but only the BlocksRuntime library portion.  (Actually the compiler-rt master subversion source repository at http://llvm.org/svn/llvm-project/compiler-rt has an automatic git mirror at http://llvm.org/git/compiler-rt.git the refs/heads/master of which is cloned into refs/heads/compiler-rt of this repository.)
 
@@ -127,8 +143,8 @@ See <a href="http://compiler-rt.llvm.org/">here</a>, <a href="http://llvm.org/do
 <h2 id="download">Download</h2>
 <p>
   You can download this project in either
-  <a href="http://github.com/mackyle/blocksruntime/zipball/master">zip</a> or
-  <a href="http://github.com/mackyle/blocksruntime/tarball/master">tar</a> formats.
+  <a href="https://github.com/mackyle/blocksruntime/archive/master.tar.gz">tar</a> or
+  <a href="https://github.com/mackyle/blocksruntime/archive/master.zip">zip</a> formats.
 </p>
 <p>You can also clone the project with <a href="http://git-scm.com">Git</a>
   by running:
@@ -174,11 +190,14 @@ available with your installation of the clang compiler.</li>
 
 <h2 id="blocksdox">Blocks Language Extension</h2>
 
-Various Blocks language extension documentation can be found at:
+<span id="doxlist">Various Blocks language extension documentation</span> can be found at:
 
 <ul>
 <li><a href="http://clang.llvm.org/docs/LanguageExtensions.html#blocks">http://clang.llvm.org/docs/LanguageExtensions.html#blocks</a></li>
-<li><a href="http://clang.llvm.org/docs/BlockLanguageSpec.txt">http://clang.llvm.org/docs/BlockLanguageSpec.txt</a></li>
+<li>Language Specification for Blocks:<br />
+<a href="http://clang.llvm.org/docs/BlockLanguageSpec.html">http://clang.llvm.org/docs/BlockLanguageSpec.html</a> (HTML)<br />
+<a href="http://llvm.org/releases/3.1/tools/clang/docs/BlockLanguageSpec.txt">http://llvm.org/releases/3.1/tools/clang/docs/BlockLanguageSpec.txt</a> (TXT)<br />
+<a href="http://www.opensource.apple.com/source/libclosure/libclosure-59/BlockSpec.rtf">http://www.opensource.apple.com/source/libclosure/libclosure-59/BlockSpec.rtf</a> (RTF)</li>
 <li><a href="http://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/Blocks">http://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/Blocks</a></li>
 <li><a href="http://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/Blocks/Blocks.pdf">http://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/Blocks/Blocks.pdf</a></li>
 </ul>
@@ -225,18 +244,28 @@ int main()
 </pre>
 In the above sample code, both <tt>block</tt> and <tt>block2</tt> are block variables.  And while <tt>i</tt> is an integer variable, the optional <tt>__block</tt> storage class language extension modifies <tt>i</tt>'s behavior when it's accessed from within a block.
 
-<h2 id="github">GitHub</h2>
-<p class="left">
-  Visit the GitHub project page (source code etc.) at <a href="http://github.com/mackyle/blocksruntime">http://github.com/mackyle/blocksruntime</a>.
-</p>
+<h2 id="seealso">See Also</h2>
+<ul>
+<li>Block Implementation Specification:<br />
+<span class="smaller">(both of these links should have the same content)</span><br />
+<a href="http://llvm.org/releases/3.1/tools/clang/docs/Block-ABI-Apple.txt">http://llvm.org/releases/3.1/tools/clang/docs/Block-ABI-Apple.txt</a><br />
+<a href="http://www.opensource.apple.com/source/libclosure/libclosure-59/BlockImplementation.txt">http://www.opensource.apple.com/source/libclosure/libclosure-59/BlockImplementation.txt</a></li>
+<li><a href="http://www.opensource.apple.com/source/libclosure/">Apple&#x2019;s libclosure Blocks Runtime implementation sources</a></li>
+<li><a href="http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1370.pdf">N1370: Apple&#x2019;s Extensions to C</a> (PDF)</li>
+<li><a href="http://code.google.com/p/cocotron/issues/detail?id=276">cocotron issue #276: integrate blocks runtime implementation</a></li>
+<li><a href="#doxlist">The documentation list in the previous section</a></li>
+</ul>
 
-<!--
-<div class="footer">
-  get the source code on GitHub : <a href="http://github.com/mackyle/blocksruntime">mackyle/blocksruntime</a>
-</div>
--->
+<h2 id="gitrepo">Git Repository Browser</h2>
+<p class="left last">
+  Repository browsers are available at:<br />
+<ul>
+<a href="https://github.com/mackyle/blocksruntime">https://github.com/mackyle/blocksruntime</a> (GitHub)<br />
+<a href="http://repo.or.cz/w/blocksruntime.git">http://repo.or.cz/w/blocksruntime.git</a> (repo.or.cz)
+</ul>
+</p>
 
 </div>
   
-</body>
+<span class="aftermargin"></span></body>
 </html>
