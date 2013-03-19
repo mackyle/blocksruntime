@@ -154,6 +154,12 @@ libBlocksRuntime.a is a static library no special system support will be needed
 to run the resulting executable.
 
 -------------
+Glibc Problem
+-------------
+The unistd.h header from glibc has an incompatibility with the -fblocks option.
+See http://mackyle.github.com/blocksruntime/#glibc for a workaround.
+
+-------------
 Documentation
 -------------
 You can find information on the Blocks language extension at these URLs
