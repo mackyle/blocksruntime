@@ -73,7 +73,19 @@
     .sidebar a:active {
       color: red;
     }
-    .footer { text-align:center; padding-top:2em; font-style: italic; }
+    :link, :visited {
+      text-decoration: none !important;
+      border-bottom: 1px dotted !important;
+    }
+    :link:hover, :visited:hover {
+      border-bottom: 1px solid !important;
+    }
+    @media print {
+      :link, :visited {
+        border-bottom: 0 !important;
+        color: inherit !important;
+      }
+    }
   </style>
 </head>
 
@@ -148,7 +160,7 @@ See <a href="http://compiler-rt.llvm.org/">here</a>, <a href="http://llvm.org/do
 </p>
 <p>You can also clone the project with <a href="http://git-scm.com">Git</a>
   by running:
-  <pre>$ git clone git://github.com/mackyle/blocksruntime</pre>
+  <pre>git clone git://github.com/mackyle/blocksruntime</pre>
 </p>
 <p>This project also has <a href="http://repo.or.cz/w/blocksruntime.git">a mirror on repo.or.cz</a> which has
 <a href="http://repo.or.cz/git-browser/by-commit.html?r=blocksruntime.git">a much better graphic log browser for the project</a>.
@@ -257,13 +269,13 @@ In the above sample code, both <tt>block</tt> and <tt>block2</tt> are block vari
 </ul>
 
 <h2 id="gitrepo">Git Repository Browser</h2>
-<p class="left last">
-  Repository browsers are available at:<br />
-<ul>
+<p class="left">
+  Repository browsers are available at:
+</p>
+<ul class="last">
 <a href="https://github.com/mackyle/blocksruntime">https://github.com/mackyle/blocksruntime</a> (GitHub)<br />
 <a href="http://repo.or.cz/w/blocksruntime.git">http://repo.or.cz/w/blocksruntime.git</a> (repo.or.cz)
 </ul>
-</p>
 
 </div>
   
