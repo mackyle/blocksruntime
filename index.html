@@ -35,7 +35,8 @@
     a { color: black; }
     .description { font-size: 1.2em; margin-bottom: 2em; margin-top: 2em; font-style: italic; }
     .download { float: right; }
-    pre, tt { font-family: Menlo, Monaco, Consolas, Courier, "Courier New", monospace; font-size: 95%;}
+    pre, ttx { font-family: Menlo, Monaco, Consolas, Courier, "Courier New", monospace; }
+    pre { font-size: 90%; }
     pre { padding: 0.5em 1ex; border: thin dotted silver; }
     hr { border: 0; width: 80%; border-bottom: thin solid silver; }
     p { text-align: justify; }
@@ -114,6 +115,7 @@
 <a href="#install"     >Install</a><br />
 <a href="#download"    >Download</a><br />
 <a href="#needs"       >Do I Need This?</a><br />
+<a href="#glibc"       >GNU C Library (glibc) Problem</a><br />
 <a href="#blocksdox"   >Blocks Language Extension</a><br />
 <a href="#seealso"     >See Also</a><br />
 <a href="#gitrepo"     >Git Repository Browser</a><br />
@@ -150,7 +152,7 @@ and <a href="http://www.opensource.org/licenses/mit-license.php">the MIT license
 See <a href="http://compiler-rt.llvm.org/">here</a>, <a href="http://llvm.org/docs/DeveloperPolicy.html#license">here</a> and the <a href="https://github.com/mackyle/blocksruntime/blob/master/BlocksRuntime/LICENSE.TXT">LICENSE.TXT</a> file for further information.</p>
 
 <h2 id="install">Install</h2>
-<p>See the <a href="https://github.com/mackyle/blocksruntime/blob/master/README.txt">README.txt</a> file for further information.</p>
+<p>See the <a href="https://github.com/mackyle/blocksruntime/blob/master/README.txt">README.txt</a> file for further information and be sure to read the <a href="#glibc">section on a glibc header incompatibility</a> if using glibc.</p>
 
 <h2 id="download">Download</h2>
 <p>
@@ -199,6 +201,37 @@ available with your installation of the clang compiler.</li>
 
 </ol>
 </p>
+
+<h2 id="glibc">GNU C Library (glibc) Problem</h2>
+
+<p>This issue is typically seen on Linux systems that use glibc.  The glibc source contains a <a href="http://repo.or.cz/w/glibc.git/blob/HEAD:/posix/unistd.h#l1147"><tt>posix/unistd.h</tt> header file</a> which typically ends up installed as <tt>/usr/include/unistd.h</tt> and contains this declaration:
+
+<pre>
+extern void encrypt (char *__block, int __edflag) __THROW __nonnull ((1));
+</pre>
+
+Unfortunately when compiling with the <tt>-fblocks</tt> option <tt>__block</tt> cannot be used as a formal parameter name.</p>
+
+<p>If the source file being compiled needs to use the <tt>-fblocks</tt> option and also <tt>#include &lt;unistd.h></tt> from glibc then there are two options:</p>
+
+<ol>
+
+<li>Change the formal parameter name in the <tt>/usr/include/unistd.h</tt> header from <tt>__block</tt> to something else such as <tt>__blockdata</tt> (or anything else so long as it&#x2019;s not <tt>__block</tt>)</li>
+
+<li>Use the workaround from the <a href="https://github.com/mackyle/blocksruntime/blob/master/testprefix.h">testprefix.h</a> header file which temporarily undefines <tt>__block</tt> includes the <tt>unistd.h</tt> header and then redefines <tt>__block</tt>:
+<pre>
+#ifdef __linux__
+#undef __block
+#endif
+#include &lt;unistd.h>
+#ifdef __linux__
+#define __block __attribute__((__blocks__(byref)))
+#endif
+</pre>
+Note that this example tests the <tt>__linux__</tt> preprocessor macro, but that is not necessarily a reliable check for the problem since glibc could be in use without <tt>__linux__</tt> being defined although in practice this seems to work fine.
+</li>
+
+</ol>
 
 <h2 id="blocksdox">Blocks Language Extension</h2>
 
