@@ -157,7 +157,7 @@ to run the resulting executable.
 Glibc Problem
 -------------
 The unistd.h header from glibc has an incompatibility with the -fblocks option.
-See http://mackyle.github.com/blocksruntime/#glibc for a workaround.
+See http://mackyle.github.io/blocksruntime/#glibc for a workaround.
 
 -------------
 Documentation
