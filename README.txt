@@ -88,25 +88,56 @@ like this instead (replacing clang-mp-3.0 with your compiler's name):
 
   CC=clang-mp-3.0 ./checktests
 
-Problems are indicated with a line that starts "*** ^FAILURE:".  You will
-probably see one of these when the copy-block-literal-rdar6439600.c test is
-run.  Yes, this is a real failure.  No it's not a bug in the Blocks runtime
-library, it's actually a bug in clang.  You may want to examine the
-copy-block-literal-rdar6439600.c source file to make sure you fully grok the
-failure so you can avoid getting burned by it in your code.  There may be a fix
-in the clang project by now (but as of the clang 3.0 release it still seems to
-fail), however it may be a while until it rolls downhill to your clang package.
+Problems are indicated with a line that starts "not ok".  You will see a few
+of these.  The ones that are marked with "# TODO" are expected to fail for the
+reason shown.  The copy-block-literal-rdar6439600.c expected failure is a real
+failure.  No it's not a bug in the Blocks runtime library, it's actually a bug
+in the compiler.  You may want to examine the copy-block-literal-rdar6439600.c
+source file to make sure you fully grok the failure so you can avoid getting
+burned by it in your code.  There may be a fix in the clang project by now (but
+as of the clang 3.2 release it still seems to fail), however it may be a while
+until it rolls downhill to your clang package.
 
-If you are using CC=gcc-apple-4.2, you will probably get two additional
-failures in the cast.c and josh.C tests.  These extra failures are not failures
-in the blocks runtime itself, just gcc not accepting some source files that
-clang accepts.  You can still use the libBlocksRuntime.a library just fine.
+If you are using CC=gcc-apple-4.2, you will probably get two additional expect
+failure compiler bugs in the cast.c and josh.C tests.  These extra failures are
+not failures in the blocks runtime itself, just gcc not accepting some source
+files that clang accepts.  You can still use the libBlocksRuntime.a library
+just fine.
 
 Note that if you have an earlier version of clang (anything before version 2.8
 see clang -v) then clang++ (C++ support) is either incomplete or missing and
 the few C++ tests (.C extension) will be automatically skipped (if clang++ is
 missing) or possibly fail in odd ways (if clang++ is present but older than
 version 2.8).
+
+Note that the ./checktests output is TAP (Test Anything Protocol) compliant and
+can therefore be run with Perl's prove utility like so:
+
+  prove -v checktests
+
+Optionally first setting CC like so:
+
+  CC=gcc-apple-4.2 prove -v checktests
+
+Omit the "-v" option for more succinct output.
+
+------------------
+ARM Hard Float Bug
+------------------
+When running on a system that uses the ARM hard float ABI (e.g. RaspberryPi),
+the clang compiler has a bug.  When passing float arguments to a vararg function
+they must also be passed on the stack, not just in hardware floating point
+registers.  The clang compiler does this correctly for normal vararg functions,
+but fails to do this for block vararg functions.
+
+If you really need this, a workaround is to call a normal vararg function that
+takes a block and ... arguments.  It can then package up the ... arguments into
+a va_list and then call the block it was passed as an argument passing the block
+the va_list.  This works fine and avoids the clang bug even though it's fugly.
+
+The checktests script marks this test (variadic.c) as expect fail when running
+the tests on an ARM hard float ABI system if it's able to detect that the ARM
+hard float ABI is in use.
 
 ----------
 Installing
