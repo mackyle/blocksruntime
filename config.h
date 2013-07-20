@@ -15,18 +15,35 @@
  * is Tiger compatible!
  */
 #include <libkern/OSAtomic.h>
-#define OSAtomicCompareAndSwapInt OSAtomicCompareAndSwap32
+#undef OSAtomicCompareAndSwapInt
+#undef OSAtomicCompareAndSwapLong
+#define OSAtomicCompareAndSwapInt(o,n,v) OSAtomicCompareAndSwap32Compat(o,n,v)
 #ifdef __LP64__
-#define OSAtomicCompareAndSwapLong OSAtomicCompareAndSwap64
+#define OSAtomicCompareAndSwapLong(o,n,v) OSAtomicCompareAndSwap64Compat(o,n,v)
 #else
-#define OSAtomicCompareAndSwapLong OSAtomicCompareAndSwap32
+#define OSAtomicCompareAndSwapLong(o,n,v) OSAtomicCompareAndSwap32Compat(o,n,v)
+#endif
+
+static __inline bool OSAtomicCompareAndSwap32Compat(int32_t o, int32_t n, volatile int32_t *v)
+{return OSAtomicCompareAndSwap32(o,n,(int32_t *)v);}
+#ifdef __LP64__
+static __inline bool OSAtomicCompareAndSwap64Compat(int64_t o, int64_t n, volatile int64_t *v)
+{return OSAtomicCompareAndSwap64(o,n,(int64_t *)v);}
 #endif
 
 #else /* !__APPLE__ */
 
-#ifdef __GNUC__
+#if defined(__WIN32__) || defined(_WIN32)
 
-#if !defined(__WIN32__) && !defined(_WIN32)
+/* Poor runtime.c code causes warnings calling InterlockedCompareExchange */
+#define _CRT_SECURE_NO_WARNINGS 1
+#include <windows.h>
+static __inline int InterlockedCompareExchangeCompat(volatile void *v, long n, long o)
+{return (int)InterlockedCompareExchange((LONG *)v, (LONG)n, (LONG)o);}
+#undef InterlockedCompareExchange
+#define InterlockedCompareExchange(v,n,o) InterlockedCompareExchangeCompat(v,n,o)
+
+#elif defined(__GNUC__) /* && !defined(__WIN32__) && !defined(_WIN32) */
 
 #if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 1) /* GCC >= 4.1 */
 
@@ -40,9 +57,7 @@
 
 #endif /* GCC earlier than version 4.1 */
 
-#endif /* !defined(__WIN32__) && !defined(_WIN32) */
-
-#endif /* __GNUC__ */
+#endif /* !defined(__GNUC__) && !defined(__WIN32__) && !defined(_WIN32) */
 
 #endif /* !__APPLE__ */
 
