@@ -43,6 +43,7 @@
     p.left { text-align: left; }
     .bigger {font-size: 112%; }
     .smaller {font-size: 89%; }
+    .nobreak {white-space: pre }
     li { margin-top: 0.5em; }
     #TOC span {
       display: inline-block;
@@ -204,7 +205,7 @@ available with your installation of the clang compiler.</li>
 
 <h2 id="glibc">GNU C Library (glibc) Problem</h2>
 
-<p>This issue is typically seen on Linux systems that use glibc.  The glibc source contains a <a href="http://repo.or.cz/w/glibc.git/blob/HEAD:/posix/unistd.h#l1147"><tt>posix/unistd.h</tt> header file</a> which typically ends up installed as <tt>/usr/include/unistd.h</tt> and contains this declaration:
+<p>This issue is typically seen on Linux systems that use glibc.  Older glibc releases contains a <a href="http://repo.or.cz/w/glibc.git/blob/glibc-2.18:/posix/unistd.h#l1147"><tt>posix/unistd.h</tt> header file</a> which typically ends up installed as <tt>/usr/include/unistd.h</tt> and contains this declaration:
 
 <pre>
 extern void encrypt (char *__block, int __edflag) __THROW __nonnull ((1));
@@ -212,11 +213,17 @@ extern void encrypt (char *__block, int __edflag) __THROW __nonnull ((1));
 
 Unfortunately when compiling with the <tt>-fblocks</tt> option <tt>__block</tt> cannot be used as a formal parameter name.</p>
 
-<p>If the source file being compiled needs to use the <tt>-fblocks</tt> option and also <tt>#include &lt;unistd.h></tt> from glibc then there are two options:</p>
+This issue was fixed in glibc as of <a href="http://repo.or.cz/w/glibc.git/commit/84ae135d">commit 84ae135d3282dc362bed0a5c9a575319ef336884</a> on <span class="nobreak">2013-11-21</span> and first appeared in the <tt>glibc-2.19</tt> release on <span class="nobreak">2014-02-07</span>.  Since <tt>ldd</tt> is part of glibc the currently installed version of glibc can be checked using <tt>ldd</tt> like so:
+
+<pre>
+ldd --version
+</pre>
+
+<p>If the source file being compiled needs to use the <tt>-fblocks</tt> option and also <tt>#include &lt;unistd.h></tt> from an older version of glibc (prior to <tt>glibc-2.19</tt>) then there are two options:</p>
 
 <ol>
 
-<li>Change the formal parameter name in the <tt>/usr/include/unistd.h</tt> header from <tt>__block</tt> to something else such as <tt>__blockdata</tt> (or anything else so long as it&#x2019;s not <tt>__block</tt>)</li>
+<li>Change the formal parameter name in the <tt>/usr/include/unistd.h</tt> header from <tt>__block</tt> to something else such as <tt>__glibc_block</tt> (or anything else so long as it&#x2019;s not <tt>__block</tt>)</li>
 
 <li>Use the workaround from the <a href="https://github.com/mackyle/blocksruntime/blob/master/testprefix.h">testprefix.h</a> header file which temporarily undefines <tt>__block</tt> includes the <tt>unistd.h</tt> header and then redefines <tt>__block</tt>:
 <pre>
