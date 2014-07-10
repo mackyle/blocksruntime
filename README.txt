@@ -206,8 +206,16 @@ needed to run the resulting executable.
 Glibc Problem
 -------------
 
-The `unistd.h` header from `glibc` has an incompatibility with the `-fblocks`
-option.  See <http://mackyle.github.io/blocksruntime/#glibc> for a workaround.
+The `unistd.h` header from older versions of `glibc` has an incompatibility with
+the `-fblocks` option.  See <http://mackyle.github.io/blocksruntime/#glibc> for
+a workaround.
+
+This problem was corrected with commit 84ae135d3282dc362bed0a5c9a575319ef336884
+(<http://repo.or.cz/w/glibc.git/commit/84ae135d>) on 2013-11-21 and first
+appears in `glibc-2.19` released on 2014-02-07.  Since `ldd` is part of `glibc`
+you can check to see what version of `glibc` you have with:
+
+        ldd --version
 
 
 
