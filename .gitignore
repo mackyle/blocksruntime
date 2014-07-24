@@ -1,5 +1,8 @@
 *.o
+*.s
 *.dSYM
+*.exe
+*.html
 /libBlocksRuntime.a
 /testbin
 /sample

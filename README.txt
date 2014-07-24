@@ -154,6 +154,41 @@ the ARM hard float ABI is in use.
 
 
 
+clang -fblocks failure
+----------------------
+
+If clang is not using the integrated assembler (option `-integrated-as`) then it
+will incorrectly pass options such as `-fblocks` down to the assembler which
+will probably not like it.  One example of an error caused by this bug is:
+
+        gcc: error: unrecognized command line option '-fblocks'
+
+In this case clang is not using the integrated assembler (which is not supported
+on all platforms) and passes the `-fblocks` option down to the gcc assembler
+which does not like that option at all.
+
+The following references talk about this:
+
+- <http://thread.gmane.org/gmane.comp.compilers.llvm.devel/56563>
+- <http://llvm.org/bugs/show_bug.cgi?id=12920>
+
+The ugly workaround for this problem is to compile the sources using both the
+`-S` and `-fblocks` options to produce a `.s` file which can then be compiled
+into whatever is desired without needing to use the `-fblocks` option.
+
+If `checktests` detects this situation it will emit a line similar to this:
+
+        WARNING: -S required for -fblocks with clang
+
+If this is the case, then rules to compile `.c` into `.s` and then compile `.s`
+into `.o` (or whatever) will be needed instead of the usual compile `.c` into
+`.o` (or whatever).
+
+Note that this workaround is required to use `-fblocks` with the version of
+clang included with cygwin.
+
+
+
 Installing
 ----------
 
@@ -193,6 +228,12 @@ just do this (replace `clang` with the name of the compiler you're using):
 
 If the above line outputs `Hello world 2` then your Blocks runtime support is
 correctly installed and fully usable.  Have fun!
+
+Note that if you have the problem described above in the section named
+"clang -fblocks failure", then you'll need to do this instead:
+
+        clang -S -o sample.s -fblocks sample.c && \
+        clang -o sample sample.s -lBlocksRuntime && ./sample
 
 Note that it's possible to use the Blocks runtime without installing it into
 the system directories.  You simply need to add an appropriate `-I` option to

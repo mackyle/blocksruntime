@@ -32,6 +32,7 @@ diagfilt() {
     echo '# '"$LINE"
   done
 }
+usedashs=
 diag 'blocksruntime tests' ''
 if ! ccver="$("$CC" --version 2>&1)"; then
   echo 'Bail out! '"\"$CC\" not installed (did you forget to set \$CC?)"
@@ -39,24 +40,47 @@ if ! ccver="$("$CC" --version 2>&1)"; then
 else
   out="$( ("$CC" -fblocks -c -o /dev/null -x c - < /dev/null 2>&1 || echo '-fblocks') 2>&1)"
   case "$out" in *"-fblocks"*)
-    echo 'Bail out! '"\"$CC\" does not support the -fblocks option"
-    exit 1
+    out="$( ("$CC" -fblocks -S -o /dev/null -x c - < /dev/null 2>&1 || echo '-fblocks') 2>&1)"
+    case "$out" in *"-fblocks"*)
+      echo 'Bail out! '"\"$CC\" does not support the -fblocks option"
+      exit 1
+    esac
+    usedashs=1
+    diag "WARNING: -S required for -fblocks with $CC"
   esac
   ccmach="$("$CC" -dumpmachine 2>/dev/null)"
 fi
+warnskipcxx=
 if cxxver="$("$CXX" --version 2>&1)"; then
   dopp=1
   out="$( ("$CXX" -fblocks -c -o /dev/null -x c - < /dev/null 2>&1 || echo '-fblocks') 2>&1)"
   case "$out" in *"-fblocks"*)
-    diag "\"$CXX\" does not support the -fblocks option; skipping C++ tests" ""
-    dopp=
+    out="$( ("$CXX" -fblocks -S -o /dev/null -x c - < /dev/null 2>&1 || echo '-fblocks') 2>&1)"
+    case "$out" in
+    *"-fblocks"*)
+      warnskipcxx="\"$CXX\" does not support the -fblocks option; skipping C++ tests"
+      dopp=
+      ;;
+    *)
+      usedashs=1
+      ;;
+    esac
+    if [ "$CC" != "$CXX" ]; then
+      diag "WARNING: -S required for -fblocks with $CXX"
+    fi
   esac
   if [ -n "$dopp" ]; then
     cxxmach="$("$CXX" -dumpmachine 2>/dev/null)"
     cxxdver="$("$CXX" -dumpversion 2>/dev/null)"
   fi
 else
-  diag "\"$CXX\" not installed; skipping C++ tests" ""
+  warnskipcxx="\"$CXX\" not installed; skipping C++ tests"
+fi
+if [ -n "$usedashs" ]; then
+  diag ""
+fi
+if [ -n "$warnskipcxx" ]; then
+  diag "$warnskipcxx" ""
 fi
 if [ ! -r "$LIB" ]; then
   echo 'Bail out! '"No \"$LIB\" file found, try running \"$(dirname "$0")/buildlib\" first"
@@ -174,17 +198,34 @@ for test in BlocksRuntime/tests/*.[cC]; do
       skipcount=$(($skipcount + 1))
     else
       if [ -n "$stub" ]; then
-        out="$( ( \
-          "$USECC" -c $CFLAGS $USEFLAGS $extra -o $TESTDIR/$(basename $test $ext).o -fblocks $test && \
-          echo "$stub" | "$USECC" $CFLAGS $USEFLAGS $extra -o $TESTDIR/$(basename $test $ext) -fblocks \
-            $TESTDIR/$(basename $test $ext).o $USELIB -x c - && \
-          cd $TESTDIR && PATH=. $(basename $test $ext) \
+        out="$( (
+          if [ -z "$usedashs" ]; then
+            "$USECC" -c $CFLAGS $USEFLAGS $extra -o $TESTDIR/$(basename $test $ext).o -fblocks $test && \
+            echo "$stub" | "$USECC" $CFLAGS $USEFLAGS $extra -o $TESTDIR/$(basename $test $ext) -fblocks \
+              $TESTDIR/$(basename $test $ext).o $USELIB -x c - && \
+            cd $TESTDIR && ./$(basename $test $ext)
+	  else
+            "$USECC" -S $CFLAGS $USEFLAGS $extra -o $TESTDIR/$(basename $test $ext).s -fblocks $test && \
+            "$USECC" -c $CFLAGS $extra -o $TESTDIR/$(basename $test $ext).o \
+	      $TESTDIR/$(basename $test $ext).s && \
+            echo "$stub" | "$USECC" $CFLAGS $USEFLAGS $extra -o $TESTDIR/$(basename $test $ext) \
+              $TESTDIR/$(basename $test $ext).o $USELIB -x c - && \
+            cd $TESTDIR && ./$(basename $test $ext)
+	  fi
         ) 2>&1)"
       else
-        out="$( ( \
-          "$USECC" -c $CFLAGS $USEFLAGS $extra -o $TESTDIR/$(basename $test $ext).o -fblocks $test && \
-          "$USECC" $CFLAGS -o $TESTDIR/$(basename $test $ext) -fblocks $TESTDIR/$(basename $test $ext).o $USELIB && \
-          cd $TESTDIR && PATH=. $(basename $test $ext) \
+        out="$( (
+          if [ -z "$usedashs" ]; then
+            "$USECC" -c $CFLAGS $USEFLAGS $extra -o $TESTDIR/$(basename $test $ext).o -fblocks $test && \
+            "$USECC" $CFLAGS -o $TESTDIR/$(basename $test $ext) -fblocks $TESTDIR/$(basename $test $ext).o $USELIB && \
+            cd $TESTDIR && ./$(basename $test $ext)
+	  else
+            "$USECC" -S $CFLAGS $USEFLAGS $extra -o $TESTDIR/$(basename $test $ext).s -fblocks $test && \
+            "$USECC" -c $CFLAGS $extra -o $TESTDIR/$(basename $test $ext).o \
+	      $TESTDIR/$(basename $test $ext).s && \
+            "$USECC" $CFLAGS -o $TESTDIR/$(basename $test $ext) $TESTDIR/$(basename $test $ext).o $USELIB && \
+            cd $TESTDIR && ./$(basename $test $ext)
+	  fi
         ) 2>&1)"
       fi
       result=$?
@@ -204,7 +245,7 @@ for test in BlocksRuntime/tests/*.[cC]; do
       else
         if [ $result != 0 ]; then
           testsfailed=1
-	  failcount=$(($failcount + 1))
+          failcount=$(($failcount + 1))
           echo "not ok $testcount - $testname"
           echo "$out" | diagfilt
         else
