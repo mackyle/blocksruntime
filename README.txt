@@ -22,7 +22,11 @@ This project contains only the BlocksRuntime files (in the `BlocksRuntime`
 subdirectory) along with tests (in the `BlocksRuntime/tests` subdirectory) and
 the original `CREDITS.TXT`, `LICENSE.TXT` and `README.txt` from the top-level
 `compiler-rt` project (which have been placed in the `BlocksRuntime`
-subdirectory).
+subdirectory).  Note that in 2014-02 the compiler-rt project moved the
+BlocksRuntime sources from the `BlocksRuntime` directory to the
+`lib/BlocksRuntime` directory and moved the tests from the `BlocksRuntime/tests`
+directory to the `test/BlocksRuntime` directory.  The files themselves, however,
+remain unchanged and are still the same as they were in 2010-08.
 
 This runtime can also be used with the `gcc-apple-4.2` compiler built using the
 MacPorts.org apple-gcc42 package on Mac OS X.
