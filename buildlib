@@ -31,7 +31,7 @@ set -v
 LIB=libBlocksRuntime.a
 SRC=BlocksRuntime
 if test -f $LIB; then rm $LIB; fi
-"$CC" -c $CFLAGS -o $SRC/data.o $SRC/data.c \
-&& "$CC" -c $CFLAGS -o $SRC/runtime.o -I . $SRC/runtime.c \
+"$CC" -fPIC -c $CFLAGS -o $SRC/data.o $SRC/data.c \
+&& "$CC" -fPIC -c $CFLAGS -o $SRC/runtime.o -I . $SRC/runtime.c \
 && "$AR" cr $LIB $SRC/data.o $SRC/runtime.o \
 && "$RANLIB" $LIB
