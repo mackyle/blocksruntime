@@ -1,37 +1,41 @@
 #!/bin/sh
+
 if [ -z "$CC" ]; then
-  if command -v gcc > /dev/null; then
-    CC=gcc
-  elif command -v clang > /dev/null; then
-    CC=clang
-  elif command -v cc > /dev/null; then
-    CC=cc
-  else
-    echo "Could not guess name of compiler, please set CC" >&2
-    exit 2
-  fi
+	if command -v gcc > /dev/null; then
+		CC=gcc
+	elif command -v clang > /dev/null; then
+		CC=clang
+	elif command -v cc > /dev/null; then
+		CC=cc
+	else
+		echo "Could not guess name of compiler, please set CC" >&2
+		exit 2
+	fi
 fi
+
 echo "CC=$CC"
 : ${AR:=ar}
 echo "AR=$AR"
 : ${RANLIB:=ranlib}
 echo "RANLIB=$RANLIB"
+
 if [ "${CFLAGS+set}" != "set" ]; then
-  case "$CC" in
-    *gcc*|*clang*)
-      CFLAGS=-O2
-      ;;
-    *)
-      CFLAGS=-O
-      ;;
-  esac
+	case "$CC" in
+		*gcc*|*clang*)
+			CFLAGS=-O2
+			;;
+		*)
+			CFLAGS=-O
+			;;
+	esac
 fi
 echo "CFLAGS=$CFLAGS"
-set -v
+
+set -ev
 LIB=libBlocksRuntime.a
 SRC=BlocksRuntime
-if test -f $LIB; then rm $LIB; fi
-"$CC" -c $CFLAGS -o $SRC/data.o $SRC/data.c \
-&& "$CC" -c $CFLAGS -o $SRC/runtime.o -I . $SRC/runtime.c \
-&& "$AR" cr $LIB $SRC/data.o $SRC/runtime.o \
-&& "$RANLIB" $LIB
+! test -e $LIB || rm $LIB
+"$CC" -c $CFLAGS -o $SRC/data.o $SRC/data.c &&
+"$CC" -c $CFLAGS -o $SRC/runtime.o -I . $SRC/runtime.c &&
+"$AR" cr $LIB $SRC/data.o $SRC/runtime.o &&
+"$RANLIB" $LIB
