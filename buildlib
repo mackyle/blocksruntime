@@ -8,6 +8,7 @@ Env:   CC       explicit "cc" compiler to use
        AR       explicit "ar" to use
        RANLIB   explicit "ranlib" to use
        CFLAGS   explicit compiler options to use
+       FPIC     explicit -fPIC/-fpic (or none) option to use
 EOT
 	exit 0
 esac
@@ -65,6 +66,21 @@ if [ "${CFLAGS+set}" != "set" ]; then
 			;;
 	esac
 fi
+
+has_cc_opt()
+{
+	"$CC" "$1" -o /tmp/cc.$$ -c -x c /dev/null >/dev/null 2>&1 &&
+	rm -f /tmp/cc.$$
+}
+if [ "${FPIC+set}" != "set" ]; then
+	if has_cc_opt "-fPIC"; then
+		FPIC="-fPIC"
+	elif has_cc_opt "-fpic"; then
+		FPIC="-fpic"
+	fi
+fi
+[ -z "$FPIC" ] || echo "FPIC=$FPIC"
+
 echo "CFLAGS=$CFLAGS"
 
 echo "LIB=$LIB"
@@ -84,13 +100,13 @@ echo "SRC=$SRC"
 ) || exit
 (
 	PS4= && set -ex
-	"$CC" -c $CFLAGS -o $SRC/data.o $SRC/data.c &&
-	"$CC" -c $CFLAGS -o $SRC/runtime.o -I . $SRC/runtime.c &&
+	"$CC" -c $FPIC $CFLAGS -o $SRC/data.o $SRC/data.c &&
+	"$CC" -c $FPIC $CFLAGS -o $SRC/runtime.o -I . $SRC/runtime.c &&
 	"$AR" cr $LIB $SRC/data.o $SRC/runtime.o &&
 	"$RANLIB" $LIB
 ) || exit
 [ -z "$shared" ] ||
 (
 	PS4= && set -ex
-	"$CC" $CFLAGS -o "$SHLIB" $SHOPT $LIB $SHOPT2
+	"$CC" $FPIC $CFLAGS -o "$SHLIB" $SHOPT $LIB $SHOPT2
 ) || exit
