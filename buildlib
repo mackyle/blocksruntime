@@ -2,7 +2,8 @@
 
 case "$1" in -h|-H|-help|--help)
 	cat <<EOT
-Usage: ${0##*/}
+Usage: ${0##*/} [-shared]
+       -shared  also attempt to build a shared library
 Env:   CC       explicit "cc" compiler to use
        AR       explicit "ar" to use
        RANLIB   explicit "ranlib" to use
@@ -10,6 +11,30 @@ Env:   CC       explicit "cc" compiler to use
 EOT
 	exit 0
 esac
+
+set -e
+
+LIB=libBlocksRuntime.a
+SRC=BlocksRuntime
+
+shared=
+[ z"$1" != z"-shared" -a z"$1" != z"--shared" ] || shared=1
+
+if [ -n "$shared" ]; then
+	UNAME_S="$(uname -s 2>/dev/null)" || :
+	case "$UNAME_S" in
+		Darwin)
+			SHLIB="${LIB%.a}.dylib"
+			SHOPT="-dynamiclib -Wl,-all_load"
+			SHOPT2=
+			;;
+		*)
+			SHLIB="${LIB%.a}.so"
+			SHOPT="-shared -Wl,-whole-archive"
+			SHOPT2="-Wl,-no-whole-archive"
+			;;
+	esac
+fi
 
 if [ -z "$CC" ]; then
 	if command -v gcc > /dev/null; then
@@ -42,11 +67,30 @@ if [ "${CFLAGS+set}" != "set" ]; then
 fi
 echo "CFLAGS=$CFLAGS"
 
-set -ev
-LIB=libBlocksRuntime.a
-SRC=BlocksRuntime
-! test -e $LIB || rm $LIB
-"$CC" -c $CFLAGS -o $SRC/data.o $SRC/data.c &&
-"$CC" -c $CFLAGS -o $SRC/runtime.o -I . $SRC/runtime.c &&
-"$AR" cr $LIB $SRC/data.o $SRC/runtime.o &&
-"$RANLIB" $LIB
+echo "LIB=$LIB"
+[ -z "$shared" ] || echo "SHLIB=$SHLIB"
+[ -z "$shared" ] || echo "SHOPT=$SHOPT"
+[ -z "$shared" ] || [ -z "$SHOPT2" ] || echo "SHOPT2=$SHOPT2"
+echo "SRC=$SRC"
+
+(
+	PS4= && set -ex
+	! test -e $LIB || rm $LIB
+) || exit
+[ -z "$shared" ] ||
+(
+	PS4= && set -ex
+	! test -e $SHLIB || rm $SHLIB
+) || exit
+(
+	PS4= && set -ex
+	"$CC" -c $CFLAGS -o $SRC/data.o $SRC/data.c &&
+	"$CC" -c $CFLAGS -o $SRC/runtime.o -I . $SRC/runtime.c &&
+	"$AR" cr $LIB $SRC/data.o $SRC/runtime.o &&
+	"$RANLIB" $LIB
+) || exit
+[ -z "$shared" ] ||
+(
+	PS4= && set -ex
+	"$CC" $CFLAGS -o "$SHLIB" $SHOPT $LIB $SHOPT2
+) || exit

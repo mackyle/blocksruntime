@@ -75,6 +75,11 @@ can do this to build a FAT OS X library:
 
         ./buildlib-osx
 
+The `buildlib` (and `buildlib-osx`) script takes a single optional `-shared`
+argument.  If given it will attempt to also build a shared library instead
+of just a static one in case you have a policy situation where use of a static
+library has been forbidden.
+
 
 
 Testing
@@ -217,6 +222,9 @@ If you want to see what will be installed without actually installing use:
 
 Note that `DESTDIR` is supported by the `installlib` script if that's needed.
 Just set `DESTDIR` before running `installlib` the same way `prefix` can be set.
+
+Note that if the shared library exists it will also be installed.  Add a single
+optional `-shared` or `-static` option to install only one or the other.
 
 
 
