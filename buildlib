@@ -1,5 +1,16 @@
 #!/bin/sh
 
+case "$1" in -h|-H|-help|--help)
+	cat <<EOT
+Usage: ${0##*/}
+Env:   CC       explicit "cc" compiler to use
+       AR       explicit "ar" to use
+       RANLIB   explicit "ranlib" to use
+       CFLAGS   explicit compiler options to use
+EOT
+	exit 0
+esac
+
 if [ -z "$CC" ]; then
 	if command -v gcc > /dev/null; then
 		CC=gcc
