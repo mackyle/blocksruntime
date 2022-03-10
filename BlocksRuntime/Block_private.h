@@ -8,10 +8,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to permit
  * persons to whom the Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -27,19 +27,22 @@
 
 #if !defined(BLOCK_EXPORT)
 #   if defined(__cplusplus)
-#       define BLOCK_EXPORT extern "C" 
+#       define BLOCK_EXPORT extern "C"
 #   else
 #       define BLOCK_EXPORT extern
 #   endif
 #endif
 
-#ifndef _MSC_VER
-#include <stdbool.h>
-#else
-/* MSVC doesn't have <stdbool.h>. Compensate. */
+#ifndef __STDC_VERSION__
+#define __STDC_VERSION__ 0
+#endif
+#if defined(_MSC_VER) || (__STDC_VERSION__ < 199901L)
+/* `MSVC' and `Before c99' doesn't have <stdbool.h>. Compensate. */
 typedef char bool;
-#define true (bool)1
-#define false (bool)0
+#define true (bool) 1
+#define false (bool) 0
+#else
+#include <stdbool.h>
 #endif
 
 #if defined(__cplusplus)
@@ -70,7 +73,7 @@ struct Block_descriptor {
 struct Block_layout {
     void *isa;
     int flags;
-    int reserved; 
+    int reserved;
     void (*invoke)(void *, ...);
     struct Block_descriptor *descriptor;
     /* Imported variables. */
